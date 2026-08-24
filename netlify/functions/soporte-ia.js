@@ -28,7 +28,7 @@ export default async (req) => {
   }
   if (!nombre || !dificultad) {
     return new Response(JSON.stringify({ error: 'Faltan datos' }), { status: 400 });
-  }
+  }d
 
   // 1) Generar el informe con Claude
   let informe = 'No se pudo generar el informe automático — revisa el mensaje original abajo.';
@@ -42,7 +42,7 @@ export default async (req) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-5',
-        max_tokens: 1300,
+        max_tokens: 4096,
         system: `Eres un estratega experto en construcción de negocios de venta directa y marketing de influencia (específicamente Beauty Influencers de Farmasi), ayudando a un líder de equipo a preparar la mejor respuesta posible para alguien de su equipo que reportó una dificultad.
 
 Tu informe debe ser profundo, específico y accionable — nunca genérico ni motivacional vacío. Ajusta la profundidad y el tipo de estrategia al nivel real de la persona (alguien recién empezando necesita fundamentos; alguien que ya genera ingresos necesita optimización y escala). Usa exactamente esta estructura, en español:
@@ -84,10 +84,14 @@ ${dificultad}`
       console.error('Anthropic API respondió con error:', aiRes.status, errText);
     } else {
       const data = await aiRes.json();
-      if (data?.content?.[0]?.text) {
-        informe = data.content[0].text;
+      // La respuesta puede traer primero un bloque de "pensamiento" del modelo
+      // y luego el bloque de texto real — buscamos el bloque de tipo "text",
+      // no asumimos que está en la primera posición.
+      const textBlock = data?.content?.find(b => b.type === 'text');
+      if (textBlock?.text) {
+        informe = textBlock.text;
       } else {
-        console.error('Respuesta de Anthropic sin texto esperado:', JSON.stringify(data));
+        console.error('Respuesta de Anthropic sin bloque de texto:', JSON.stringify(data));
       }
     }
   } catch (err) {
