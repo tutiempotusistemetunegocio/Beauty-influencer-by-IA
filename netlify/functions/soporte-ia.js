@@ -42,7 +42,7 @@ export default async (req) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-5',
-        max_tokens: 2000,
+        max_tokens: 1300,
         system: `Eres un estratega experto en construcción de negocios de venta directa y marketing de influencia (específicamente Beauty Influencers de Farmasi), ayudando a un líder de equipo a preparar la mejor respuesta posible para alguien de su equipo que reportó una dificultad.
 
 Tu informe debe ser profundo, específico y accionable — nunca genérico ni motivacional vacío. Ajusta la profundidad y el tipo de estrategia al nivel real de la persona (alguien recién empezando necesita fundamentos; alguien que ya genera ingresos necesita optimización y escala). Usa exactamente esta estructura, en español:
@@ -79,9 +79,19 @@ ${dificultad}`
         }]
       })
     });
-    const data = await aiRes.json();
-    if (data?.content?.[0]?.text) informe = data.content[0].text;
+    if (!aiRes.ok) {
+      const errText = await aiRes.text();
+      console.error('Anthropic API respondió con error:', aiRes.status, errText);
+    } else {
+      const data = await aiRes.json();
+      if (data?.content?.[0]?.text) {
+        informe = data.content[0].text;
+      } else {
+        console.error('Respuesta de Anthropic sin texto esperado:', JSON.stringify(data));
+      }
+    }
   } catch (err) {
+    console.error('Fallo al llamar a la API de Anthropic:', err.message || err);
     // si la IA falla, igual seguimos y te llega el mensaje original sin procesar
   }
 
