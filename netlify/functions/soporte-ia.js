@@ -9,45 +9,36 @@
 //   TEAM_PASSCODE        -> el código que le das a tu equipo para usar esta página
 //   FORMSPREE_ENDPOINT   -> el mismo endpoint de Formspree que ya usas (o uno nuevo)
 
-export default async (req) => {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+exports.handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method not allowed' };
   }
 
   let body;
   try {
-    body = await req.json();
+    body = JSON.parse(event.body);
   } catch {
-    return new Response(JSON.stringify({ error: 'Solicitud inválida' }), { status: 400 });
+    return { statusCode: 400, body: JSON.stringify({ error: 'Solicitud inválida' }) };
   }
 
   const { nombre, dificultad, passcode, nivel, tiempoEnEsto } = body;
 
   if (!passcode || passcode !== process.env.TEAM_PASSCODE) {
-    return new Response(JSON.stringify({ error: 'Código de acceso incorrecto' }), { status: 401 });
+    return { statusCode: 401, body: JSON.stringify({ error: 'Código de acceso incorrecto' }) };
   }
   if (!nombre || !dificultad) {
-    return new Response(JSON.stringify({ error: 'Faltan datos' }), { status: 400 });
+    return { statusCode: 400, body: JSON.stringify({ error: 'Faltan datos' }) };
   }
 
   // 1) Generar el informe con Claude
   let informe = 'No se pudo generar el informe automático — revisa el mensaje original abajo.';
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 22000);
   try {
-    const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
-      signal: controller.signal,
-      method: 'POST',
-      headers: {
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-5',
-        max_tokens: 1600,
-        thinking: { type: 'disabled' },
-        system: `Eres un estratega experto en construcción de negocios de venta directa y marketing de influencia (específicamente Beauty Influencers de Farmasi), ayudando a un líder de equipo a preparar la mejor respuesta posible para alguien de su equipo que reportó una dificultad.
+    const https = require('https');
+    const payload = JSON.stringify({
+      model: 'claude-sonnet-5',
+      max_tokens: 1600,
+      thinking: { type: 'disabled' },
+      system: `Eres un estratega experto en construcción de negocios de venta directa y marketing de influencia (específicamente Beauty Influencers de Farmasi), ayudando a un líder de equipo a preparar la mejor respuesta posible para alguien de su equipo que reportó una dificultad.
 
 Tu informe debe ser profundo, específico y accionable — nunca genérico ni motivacional vacío. Ajusta la profundidad y el tipo de estrategia al nivel real de la persona (alguien recién empezando necesita fundamentos; alguien que ya genera ingresos necesita optimización y escala). Usa exactamente esta estructura, en español:
 
@@ -72,40 +63,64 @@ Si aplica, qué tipo de contenido, formato o ejemplo concreto le ayudaría (ej: 
 Alta / Media / Baja, y si esto amerita una llamada 1 a 1 o basta con un mensaje — con la razón en una frase.
 
 Sé denso en valor, específico, y trata cada caso como si fuera el más importante que vas a resolver hoy. Nunca rellenes con frases genéricas de motivación ("¡tú puedes!", "no te rindas") — cada línea debe aportar algo accionable.`,
-        messages: [{
-          role: 'user',
-          content: `Miembro del equipo: ${nombre}
+      messages: [{
+        role: 'user',
+        content: `Miembro del equipo: ${nombre}
 Nivel actual: ${nivel || 'No especificado'}
 Tiempo trabajando en el negocio: ${tiempoEnEsto || 'No especificado'}
 
 Dificultad reportada:
 ${dificultad}`
-        }]
-      })
+      }]
     });
-    clearTimeout(timeoutId);
-    if (!aiRes.ok) {
-      const errText = await aiRes.text();
-      console.error('Anthropic API respondió con error:', aiRes.status, errText);
+
+    const data = await new Promise((resolve, reject) => {
+      const req = https.request(
+        {
+          hostname: 'api.anthropic.com',
+          path: '/v1/messages',
+          method: 'POST',
+          headers: {
+            'x-api-key': process.env.ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+            'content-length': Buffer.byteLength(payload)
+          },
+          timeout: 20000
+        },
+        (res) => {
+          let raw = '';
+          res.on('data', (chunk) => (raw += chunk));
+          res.on('end', () => {
+            try {
+              resolve({ status: res.statusCode, json: JSON.parse(raw) });
+            } catch (e) {
+              reject(new Error('Respuesta no es JSON válido: ' + raw.slice(0, 300)));
+            }
+          });
+        }
+      );
+      req.on('timeout', () => {
+        req.destroy();
+        reject(new Error('Timeout de 20s alcanzado llamando a Anthropic'));
+      });
+      req.on('error', (e) => reject(e));
+      req.write(payload);
+      req.end();
+    });
+
+    if (data.status !== 200) {
+      console.error('Anthropic API respondió con error:', data.status, JSON.stringify(data.json));
     } else {
-      const data = await aiRes.json();
-      // La respuesta puede traer primero un bloque de "pensamiento" del modelo
-      // y luego el bloque de texto real — buscamos el bloque de tipo "text",
-      // no asumimos que está en la primera posición.
-      const textBlock = data?.content?.find(b => b.type === 'text');
+      const textBlock = data.json?.content?.find((b) => b.type === 'text');
       if (textBlock?.text) {
         informe = textBlock.text;
       } else {
-        console.error('Respuesta de Anthropic sin bloque de texto:', JSON.stringify(data));
+        console.error('Respuesta de Anthropic sin bloque de texto:', JSON.stringify(data.json));
       }
     }
   } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.name === 'AbortError') {
-      console.error('La llamada a Anthropic se colgó y fue cancelada tras 22 segundos.');
-    } else {
-      console.error('Fallo al llamar a la API de Anthropic:', err.message || err);
-    }
+    console.error('Fallo al llamar a la API de Anthropic:', err.message || err);
     // si la IA falla, igual seguimos y te llega el mensaje original sin procesar
   }
 
@@ -127,15 +142,16 @@ ${dificultad}`
     if (!fsRes.ok) {
       const fsErrText = await fsRes.text();
       console.error('Formspree respondió con error:', fsRes.status, fsErrText);
-      return new Response(JSON.stringify({ error: 'No se pudo enviar el informe' }), { status: 500 });
+      return { statusCode: 500, body: JSON.stringify({ error: 'No se pudo enviar el informe' }) };
     }
   } catch (err) {
     console.error('Fallo al llamar a Formspree:', err.message || err);
-    return new Response(JSON.stringify({ error: 'No se pudo enviar el informe' }), { status: 500 });
+    return { statusCode: 500, body: JSON.stringify({ error: 'No se pudo enviar el informe' }) };
   }
 
-  return new Response(JSON.stringify({ ok: true }), {
-    status: 200,
-    headers: { 'content-type': 'application/json' }
-  });
+  return {
+    statusCode: 200,
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ok: true })
+  };
 };
