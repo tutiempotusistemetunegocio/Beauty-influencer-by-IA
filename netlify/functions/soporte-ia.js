@@ -33,7 +33,7 @@ export default async (req) => {
   // 1) Generar el informe con Claude
   let informe = 'No se pudo generar el informe automático — revisa el mensaje original abajo.';
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 9000);
+  const timeoutId = setTimeout(() => controller.abort(), 22000);
   try {
     const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
       signal: controller.signal,
@@ -102,7 +102,7 @@ ${dificultad}`
   } catch (err) {
     clearTimeout(timeoutId);
     if (err.name === 'AbortError') {
-      console.error('La llamada a Anthropic se colgó y fue cancelada tras 9 segundos.');
+      console.error('La llamada a Anthropic se colgó y fue cancelada tras 22 segundos.');
     } else {
       console.error('Fallo al llamar a la API de Anthropic:', err.message || err);
     }
