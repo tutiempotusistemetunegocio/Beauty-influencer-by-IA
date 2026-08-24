@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es" style="background:#000000;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#000000">
+<title>Tu tiempo es tuyo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000000;
+    --bg-alt:#120d04;
+    --gold:#d4a017;
+    --gold-soft:#ffd966;
+    --violet:#8a6a1f;
+    --cream:#faf3e0;
+    --cream-dim:#c9bd9c;
+    --line:rgba(250,243,224,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth; background:#000000; height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    min-height:100vh;
+    min-height:100dvh;
+  }
+  h1,h2,h3{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    line-height:1.15;
+    letter-spacing:-0.01em;
+  }
+  .eyebrow{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.78rem;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:1.1rem;
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px;
+    height:1px;
+    background:var(--gold);
+  }
+  section{
+    padding:5.5rem 1.5rem;
+    max-width:640px;
+    margin:0 auto;
+    position:relative;
+    background:#000000;
+  }
+  .divider{
+    height:1px;
+    background:var(--line);
+    max-width:640px;
+    margin:0 auto;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:flex-start;
+    padding:2rem 1.5rem;
+    max-width:680px;
+    position:relative;
+    overflow:hidden;
+    background:#000000;
+  }
+  .glow{
+    position:absolute;
+    top:20%;
+    right:-10%;
+    width:70vw;
+    max-width:640px;
+    aspect-ratio:1;
+    background:radial-gradient(circle, rgba(212,160,23,0.26) 0%, rgba(212,160,23,0.09) 42%, rgba(212,160,23,0) 68%);
+    animation:pulse 8s ease-in-out infinite;
+    pointer-events:none;
+    z-index:0;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:0.65; transform:scale(1);}
+    50%{opacity:1; transform:scale(1.12);}
+  }
+  .brand{
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+    margin-bottom:2.4rem;
+  }
+  .brand-mark{
+    width:44px; height:44px;
+    flex-shrink:0;
+  }
+  .brand-text{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.82rem;
+    font-weight:600;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--cream);
+  }
+  .brand-text span{color:var(--gold-soft);}
+  .hero-content{position:relative; z-index:1;}
+  .hero h1{
+    font-size:clamp(2.4rem, 7vw, 3.6rem);
+    color:var(--cream);
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--gold-soft);
+  }
+  .hero p.sub{
+    margin-top:1.4rem;
+    font-size:1.08rem;
+    color:var(--cream-dim);
+    max-width:480px;
+  }
+  .btn{
+    display:inline-block;
+    margin-top:2.2rem;
+    background:var(--gold);
+    color:#1a1408;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    letter-spacing:0.02em;
+    padding:0.95rem 1.9rem;
+    border-radius:2px;
+    text-decoration:none;
+    transition:transform .25s ease, background .25s ease;
+  }
+  .btn:hover{background:var(--gold-soft); transform:translateY(-2px);}
+  .btn:focus-visible{outline:2px solid var(--gold-soft); outline-offset:3px;}
+  .btn.secondary{
+    background:transparent;
+    color:var(--cream);
+    border:1px solid var(--line);
+  }
+  .btn.secondary:hover{border-color:var(--gold); color:var(--gold-soft); background:transparent;}
+
+  /* ---------- REVEAL ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- STORY ---------- */
+  .story h2{font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:1.3rem;}
+  .story p{color:var(--cream-dim); margin-bottom:1.1rem; font-size:1.02rem;}
+  .story strong{color:var(--cream); font-weight:600;}
+
+  /* ---------- VALUE PILLARS ---------- */
+  .pillars{background:#120d04;}
+  .pillar{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:1.4rem;
+    padding:1.8rem 0;
+    border-top:1px solid var(--line);
+  }
+  .pillar:last-child{border-bottom:1px solid var(--line);}
+  .pillar-mark{
+    font-family:'Fraunces',serif;
+    font-size:1.3rem;
+    color:var(--gold-soft);
+    padding-top:0.15rem;
+  }
+  .pillar:nth-child(2) .pillar-mark{color:var(--violet);}
+  .pillar h3{font-size:1.15rem; color:var(--cream); margin-bottom:0.4rem;}
+  .pillar p{color:var(--cream-dim); font-size:0.97rem;}
+
+  /* ---------- AI SECTION ---------- */
+  .ai-visual{
+    margin:2rem 0 2.5rem;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.6rem;
+    background:linear-gradient(160deg, rgba(227,168,78,0.06), transparent 60%);
+  }
+  .ai-step{
+    display:flex;
+    align-items:center;
+    gap:0.9rem;
+    padding:0.7rem 0;
+    font-size:0.95rem;
+    color:var(--cream-dim);
+  }
+  .ai-step:not(:last-child){border-bottom:1px dashed var(--line);}
+  .ai-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--gold);
+    flex-shrink:0;
+  }
+  .ai-step b{color:var(--cream); font-weight:600;}
+
+  /* ---------- FARMASI ---------- */
+  .farmasi{background:#120d04;}
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1rem;
+    margin:2.2rem 0 2.6rem;
+    text-align:center;
+  }
+  .stat b{
+    display:block;
+    font-family:'Fraunces',serif;
+    font-size:1.8rem;
+    color:var(--gold-soft);
+  }
+  .stat span{
+    font-size:0.78rem;
+    color:var(--cream-dim);
+    letter-spacing:0.02em;
+  }
+  .checklist{margin-top:1.5rem;}
+  .check{
+    display:flex;
+    gap:0.85rem;
+    padding:0.85rem 0;
+    border-top:1px solid var(--line);
+    font-size:0.97rem;
+    color:var(--cream-dim);
+  }
+  .checklist .check:last-child{border-bottom:1px solid var(--line);}
+  .check svg{flex-shrink:0; margin-top:0.2rem;}
+  .check b{color:var(--cream); font-weight:600;}
+  .fine-print{
+    margin-top:1.6rem;
+    font-size:0.82rem;
+    color:rgba(201,194,180,0.65);
+    font-style:italic;
+  }
+
+  /* ---------- CTA ---------- */
+  .cta{
+    text-align:left;
+    padding-bottom:7rem;
+  }
+  .cta h2{font-size:clamp(1.9rem,5vw,2.6rem); margin-bottom:1rem;}
+  .cta p{color:var(--cream-dim); margin-bottom:1.8rem; max-width:460px;}
+  .steps{
+    display:flex;
+    flex-direction:column;
+    gap:0.9rem;
+    margin:2rem 0 2.4rem;
+  }
+  .step{
+    display:flex;
+    gap:1rem;
+    align-items:baseline;
+  }
+  .step-num{
+    font-family:'Space Grotesk',sans-serif;
+    color:var(--gold);
+    font-size:0.85rem;
+    font-weight:600;
+    min-width:1.4rem;
+  }
+  .step-text{color:var(--cream-dim); font-size:0.97rem;}
+  .cta-buttons{display:flex; gap:0.9rem; flex-wrap:wrap;}
+
+  .statement{
+    text-align:center;
+    background:#000000;
+    padding:6.5rem 1.5rem;
+  }
+  .statement h2{
+    font-size:clamp(2.2rem, 9vw, 3.4rem);
+    letter-spacing:-0.01em;
+  }
+  .statement h2 span{display:block;}
+  .statement h2 .g{color:var(--gold-soft);}
+  .statement p{
+    margin-top:1.4rem;
+    color:var(--cream-dim);
+    font-size:1rem;
+    max-width:420px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  footer{
+    text-align:center;
+    padding:2.5rem 1.5rem 3rem;
+    color:rgba(201,194,180,0.45);
+    font-size:0.82rem;
+    background:#000000;
+  }
+
+  @media (max-width:480px){
+    section{padding:4rem 1.35rem;}
+    .stat-row{gap:0.6rem;}
+    .stat b{font-size:1.35rem;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .glow{animation:none;}
+    .reveal{transition:none; opacity:1; transform:none;}
+  }
+</style>
+</head>
+<body style="background:#000000;">
+
+<section class="hero">
+  <div class="glow"></div>
+  <div class="hero-content">
+    <div style="margin-bottom:2.4rem;">
+<div class="galaxy-logo-wrap" style="max-width:640px; margin:0 auto; background:#050208;">
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@400;500&display=swap');
+
+  .stage{position:relative; width:100%; max-width:1300px;}
+  .galaxy-logo-wrap svg{display:block; width:100%; height:auto;}
+
+  .wordmark{ font-family:'Cormorant Garamond', Georgia, serif; font-weight:600; }
+  .tagline{ font-family:'Jost', Arial, sans-serif; font-weight:500; letter-spacing:0.3em; }
+
+  /* twinkling stars */
+  .star{ animation: twinkle 4s ease-in-out infinite; transform-origin:center; }
+  .star:nth-child(3n){ animation-duration:5.5s; }
+  .star:nth-child(4n){ animation-duration:3.2s; }
+  .star:nth-child(5n){ animation-delay:1.1s; }
+  .star:nth-child(7n){ animation-delay:2.3s; }
+  @keyframes twinkle{
+    0%,100%{ opacity:0.15; }
+    50%{ opacity:1; }
+  }
+
+  /* slow nebula drift */
+  .nebula{ animation: drift 22s ease-in-out infinite alternate; }
+  @keyframes drift{
+    0%{ transform:translate(0,0) scale(1); }
+    100%{ transform:translate(-12px,10px) scale(1.05); }
+  }
+
+  /* burst rays pulse + very slow rotation */
+  .burst-rays{ transform-origin:300px 280px; animation: rotateSlow 90s linear infinite, pulseRays 3.4s ease-in-out infinite; }
+  @keyframes rotateSlow{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+  @keyframes pulseRays{ 0%,100%{ opacity:0.55; } 50%{ opacity:1; } }
+
+  /* rings gentle breathing */
+  .ring{ transform-origin:300px 280px; animation: breathe 5s ease-in-out infinite; }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); opacity:0.9; }
+    50%{ transform:scale(1.015); opacity:1; }
+  }
+
+  /* monogram draws itself in on load, then stays */
+  .monogram-path{
+    stroke-dasharray:420;
+    stroke-dashoffset:420;
+    animation: drawIn 2.2s cubic-bezier(.4,0,.2,1) 0.3s forwards;
+  }
+  @keyframes drawIn{ to{ stroke-dashoffset:0; } }
+
+  /* AI node: appears after draw-in, then pulses forever */
+  .ai-node{
+    opacity:0;
+    animation: appear 0.6s ease forwards 2.3s, nodePulse 2.2s ease-in-out infinite 2.9s;
+  }
+  @keyframes appear{ to{ opacity:1; } }
+  @keyframes nodePulse{
+    0%,100%{ r:4.5; opacity:1; }
+    50%{ r:6.5; opacity:0.6; }
+  }
+
+  /* AI data symbols: emerge (fade+scale in), hold, fade out, on loop, staggered */
+  .ai-symbol{
+    opacity:0;
+    transform-box: fill-box;
+    transform-origin:center;
+    animation-name: surge;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  @keyframes surge{
+    0%{ opacity:0; transform:scale(0.7) translateY(6px); }
+    15%{ opacity:0.85; transform:scale(1) translateY(0); }
+    75%{ opacity:0.85; transform:scale(1) translateY(-4px); }
+    100%{ opacity:0; transform:scale(0.8) translateY(-10px); }
+  }
+
+  .wtext{
+    opacity:0;
+    transform:translateY(8px);
+    animation: riseIn 1s ease forwards;
+  }
+  .wt1{ animation-delay:1.9s; }
+  .wt2{ animation-delay:2.1s; }
+  .wt3{ animation-delay:2.3s; }
+  .wdiv{ animation-delay:2.5s; }
+  .wtag{ animation-delay:2.7s; }
+  @keyframes riseIn{ to{ opacity:1; transform:translateY(0); } }
+
+</style>
+<div class="stage" style="width:100%;">
+<svg width="1300" height="560" viewBox="0 0 1300 560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="galaxyCore" cx="24%" cy="50%" r="65%">
+      <stop offset="0%" stop-color="#123255"/>
+      <stop offset="35%" stop-color="#0a1c33"/>
+      <stop offset="70%" stop-color="#0a0614"/>
+      <stop offset="100%" stop-color="#050208"/>
+    </radialGradient>
+    <radialGradient id="nebulaWisp1" cx="30%" cy="35%" r="45%">
+      <stop offset="0%" stop-color="#c9a227" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#c9a227" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebulaWisp2" cx="62%" cy="68%" r="42%">
+      <stop offset="0%" stop-color="#1e5f8f" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#1e5f8f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebulaWisp3" cx="82%" cy="20%" r="38%">
+      <stop offset="0%" stop-color="#3fa0c9" stop-opacity="0.24"/>
+      <stop offset="100%" stop-color="#3fa0c9" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="goldFlat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e6c261"/>
+      <stop offset="50%" stop-color="#c9a227"/>
+      <stop offset="100%" stop-color="#9c7d1c"/>
+    </linearGradient>
+    <radialGradient id="burstGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c9a227" stop-opacity="0.28"/>
+      <stop offset="60%" stop-color="#c9a227" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#c9a227" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="whisperGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1300" height="560" fill="#050208"/>
+  <g class="nebula">
+    <rect width="1300" height="560" fill="url(#galaxyCore)"/>
+    <rect width="1300" height="560" fill="url(#nebulaWisp1)"/>
+    <rect width="1300" height="560" fill="url(#nebulaWisp2)"/>
+    <rect width="1300" height="560" fill="url(#nebulaWisp3)"/>
+  </g>
+
+  <!-- star field -->
+  <g class="stars">
+  </g>
+
+  <!-- floating AI data symbols -->
+  <g class="ai-symbols">
+  </g>
+
+  <!-- ===== MARK ===== -->
+  <g transform="translate(300,280)" filter="url(#whisperGlow)">
+    <circle class="burst-rays" r="230" fill="url(#burstGlow)"/>
+    <g class="burst-rays">
+    </g>
+
+    <circle class="ring" r="118" fill="none" stroke="url(#goldFlat)" stroke-width="1"/>
+    <circle class="ring" r="104" fill="none" stroke="url(#goldFlat)" stroke-width="1.6"/>
+
+    <g stroke="url(#goldFlat)" stroke-width="1">
+      <line x1="0" y1="-118" x2="0" y2="-128"/>
+      <line x1="0" y1="118" x2="0" y2="128"/>
+      <line x1="-118" y1="0" x2="-128" y2="0"/>
+      <line x1="118" y1="0" x2="128" y2="0"/>
+    </g>
+
+    <path class="monogram-path" d="M -34 62
+             L -34 -62
+             C -8 -62, 20 -50, 20 -28
+             C 20 -12, 8 -2, -6 2
+             C 12 6, 26 18, 26 36
+             C 26 56, 4 62, -18 62
+             L -34 62"
+          fill="none" stroke="url(#goldFlat)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle class="ai-node" cx="20" cy="-28" r="4.5" fill="url(#goldFlat)"/>
+  </g>
+
+  <line x1="470" y1="180" x2="470" y2="380" stroke="url(#goldFlat)" stroke-width="1" opacity="0.5"/>
+
+  <!-- ===== WORDMARK ===== -->
+  <text x="520" y="238" class="wordmark wtext wt1" font-size="46" fill="#f5efe0" letter-spacing="0.5">Tu Tiempo.</text>
+  <text x="520" y="290" class="wordmark wtext wt2" font-size="46" fill="#f5efe0" letter-spacing="0.5">Tu Sistema.</text>
+  <text x="520" y="342" class="wordmark wtext wt3" font-size="46" fill="#f5efe0" letter-spacing="0.5">Tu Negocio.</text>
+
+  <line x1="520" y1="370" x2="800" y2="370" class="wtext wdiv" stroke="url(#goldFlat)" stroke-width="1"/>
+  <text x="520" y="400" class="tagline wtext wtag" font-size="13" fill="#c9a227">BEAUTY INFLUENCER · BY AI</text>
+
+</svg>
+</div>
+<script>
+  // genera el campo de estrellas y los rayos de estallido dinámicamente
+  (function(){
+    // campo de estrellas disperso por todo el lienzo
+    const starsGroup = document.querySelector('.stars');
+    let starsHTML = '';
+    const starSeed = [
+      [40,60],[95,180],[150,40],[210,320],[260,120],[320,460],[380,60],[430,220],
+      [480,480],[540,90],[610,350],[660,40],[700,420],[740,150],[790,480],[840,70],
+      [880,270],[930,400],[970,60],[1010,220],[1060,340],[1100,90],[1140,460],[1180,180],
+      [1220,320],[1250,60],[60,400],[120,300],[180,470],[900,140],[1000,470],[350,380],
+      [600,200],[750,300],[830,380],[500,60],[240,220],[1150,260]
+    ];
+    starSeed.forEach((p,i)=>{
+      const r = (i % 4 === 0) ? 1.6 : (i % 3 === 0 ? 1.1 : 0.7);
+      starsHTML += `<circle class="star" cx="${p[0]}" cy="${p[1]}" r="${r}" fill="#f5efe0"/>`;
+    });
+    // capa extra de estrellas finas, generadas para densificar el campo estelar
+    for(let i=0;i<55;i++){
+      const x = (Math.sin(i*12.9898)*43758.5453 % 1);
+      const y = (Math.sin(i*78.233)*12345.678 % 1);
+      const px = Math.abs(x) * 1300;
+      const py = Math.abs(y) * 560;
+      const r = (i % 6 === 0) ? 1.3 : 0.5;
+      const op = (i % 6 === 0) ? 0.9 : (0.3 + (i % 4) * 0.12);
+      starsHTML += `<circle class="star" cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r}" fill="#f5efe0" opacity="${op.toFixed(2)}"/>`;
+    }
+    starsGroup.innerHTML = starsHTML;
+
+    // símbolos flotantes de IA: binarios, nodos de circuito, hexágonos — emergen y se desvanecen
+    const aiGroup = document.querySelector('.ai-symbols');
+    const symbolTypes = [
+      (x,y)=>`<text x="${x}" y="${y}" font-family="monospace" font-size="15" fill="#e6c261">01</text>`,
+      (x,y)=>`<text x="${x}" y="${y}" font-family="monospace" font-size="15" fill="#e6c261">10</text>`,
+      (x,y)=>`<text x="${x}" y="${y}" font-family="monospace" font-size="13" fill="#c9a227">1</text>`,
+      (x,y)=>`<text x="${x}" y="${y}" font-family="monospace" font-size="13" fill="#c9a227">0</text>`,
+      (x,y)=>`<g transform="translate(${x},${y})"><circle r="3" fill="#e6c261"/><line x1="0" y1="0" x2="14" y2="-8" stroke="#c9a227" stroke-width="1"/><line x1="0" y1="0" x2="-14" y2="8" stroke="#c9a227" stroke-width="1"/><circle cx="14" cy="-8" r="2" fill="#c9a227"/><circle cx="-14" cy="8" r="2" fill="#c9a227"/></g>`,
+      (x,y)=>`<polygon points="${x},${y-10} ${x+9},${y-5} ${x+9},${y+5} ${x},${y+10} ${x-9},${y+5} ${x-9},${y-5}" fill="none" stroke="#c9a227" stroke-width="1"/>`,
+      (x,y)=>`<g transform="translate(${x},${y})"><circle r="2.5" fill="#e6c261"/><circle r="8" fill="none" stroke="#c9a227" stroke-width="0.8" opacity="0.7"/></g>`
+    ];
+    const aiPositions = [
+      [110,90],[1180,110],[90,470],[1200,440],[230,60],[1050,60],
+      [150,250],[1120,260],[640,60],[640,480],[970,180],[240,400],
+      [1020,400],[80,200],[1220,220],[560,440]
+    ];
+    let aiHTML = '';
+    aiPositions.forEach((p,i)=>{
+      const type = symbolTypes[i % symbolTypes.length];
+      const dur = (7 + (i % 5) * 1.6).toFixed(1);
+      const delay = (i * 0.85 % 9).toFixed(1);
+      aiHTML += `<g class="ai-symbol" style="animation-duration:${dur}s; animation-delay:${delay}s;">${type(p[0],p[1])}</g>`;
+    });
+    aiGroup.innerHTML = aiHTML;
+
+    // rayos de estallido dorados
+    const rayContainers = document.querySelectorAll('.burst-rays');
+    const rayGroup = rayContainers[1]; // el <g> de rayos (el segundo elemento con esa clase)
+    let raysHTML = '';
+    const n = 32;
+    for(let i=0;i<n;i++){
+      const angle = (360/n) * i;
+      const rad = angle * Math.PI/180;
+      const outerChoices = [145,145,160,175,190];
+      const outer = outerChoices[i % outerChoices.length];
+      const x1 = (130*Math.cos(rad)).toFixed(1);
+      const y1 = (130*Math.sin(rad)).toFixed(1);
+      const x2 = (outer*Math.cos(rad)).toFixed(1);
+      const y2 = (outer*Math.sin(rad)).toFixed(1);
+      const op = (0.15 + (i % 5) * 0.08).toFixed(2);
+      raysHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="url(#goldFlat)" stroke-width="1" opacity="${op}"/>`;
+    }
+    rayGroup.innerHTML = raysHTML;
+  })();
+</script>
+</div>
+    </div>
+    <p class="eyebrow">Tu tiempo, tu sistema</p>
+    <h1>Tu tiempo es el negocio<br>más valioso que <em>ya tienes</em>.</h1>
+    <p class="sub">Un sistema construido con inteligencia artificial para que dediques tu tiempo solo a las personas correctas — y construyas algo tuyo, a tu ritmo.</p>
+    <a href="cuestionario.html" class="btn">Descubre tu punto de partida</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="story reveal">
+  <p class="eyebrow">Mi historia</p>
+  <h2>Todo empezó con una pregunta simple.</h2>
+  <p>Tengo un hijo de cinco meses. Y desde que nació, el tiempo dejó de ser un concepto abstracto — se volvió lo más valioso que tengo, y lo que menos me sobra.</p>
+  <p>Ahí me hice una pregunta que cambió todo: <strong>¿cuánto vale realmente mi tiempo, y en qué lo estoy invirtiendo?</strong> Quiero aprovecharlo. Quiero construir patrimonio. Quiero que cada hora que trabajo valga la pena — no solo para pagar cuentas, sino para construir algo real, algo mío, algo para mi familia.</p>
+  <p>De esa decisión nació este sistema — una forma de trabajar con inteligencia, con estrategia, para que mi tiempo (y el de las personas que se suman conmigo) se invierta donde realmente construye futuro.</p>
+</section>
+
+<section class="statement reveal">
+  <h2><span>TU TIEMPO.</span><span class="g">TU SISTEMA.</span></h2>
+  <p>Todo lo que estás a punto de conocer nace de esa idea: recuperar tu tiempo con un sistema que trabaja para ti.</p>
+</section>
+
+<div class="divider"></div>
+
+<section class="pillars reveal">
+  <p class="eyebrow">Tu tiempo</p>
+  <h2 style="font-size:clamp(1.7rem,4vw,2.2rem); margin-bottom:0.5rem;">Por qué valorizar tu tiempo lo cambia todo</h2>
+  <div style="margin-top:2rem;">
+    <div class="pillar">
+      <div class="pillar-mark">I</div>
+      <div>
+        <h3>Es el único recurso que no vuelve</h3>
+        <p>El dinero se recupera. Las horas con tu familia, un trabajo agotador, o un negocio que no es tuyo, no.</p>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-mark">II</div>
+      <div>
+        <h3>Lo que no se protege, se gasta</h3>
+        <p>Sin un sistema claro, tu tiempo se dispersa en mensajes sin rumbo y conversaciones que nunca despegan.</p>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-mark">III</div>
+      <div>
+        <h3>Valorizarlo es el primer paso para construir algo propio</h3>
+        <p>Cuando decides qué merece tu tiempo, empiezas a construir un negocio — no solo a llenar el día.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="reveal">
+  <p class="eyebrow">La herramienta</p>
+  <h2 style="font-size:clamp(1.7rem,4vw,2.2rem);">Cómo la inteligencia artificial te devuelve horas</h2>
+  <p style="color:var(--cream-dim); margin-top:1rem;">El sistema hace el trabajo repetitivo por ti, para que tú inviertas tu energía en las conversaciones que más te emocionan.</p>
+  <div class="ai-visual">
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Recibe</b> cada lead que llega desde tus redes.</span></div>
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Despierta</b> la curiosidad de esa persona con un cuestionario corto.</span></div>
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Puntúa</b> su motivación real para el negocio.</span></div>
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Agenda</b> automáticamente solo a quienes califican.</span></div>
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Te prepara</b> con un resumen antes de cada llamada.</span></div>
+  </div>
+  <p style="color:var(--cream-dim); font-size:0.95rem;">Nada de responder el mismo mensaje veinte veces. Tu energía se queda para las conversaciones que te acercan a tu meta.</p>
+</section>
+
+<div class="divider"></div>
+
+<section class="farmasi reveal">
+  <p class="eyebrow">La oportunidad</p>
+  <h2 style="font-size:clamp(1.7rem,4vw,2.2rem);">¿Por qué Farmasi?</h2>
+  <p style="color:var(--cream-dim); margin-top:1rem;">Una marca turca de belleza y bienestar con más de 70 años de trayectoria, y un plan de compensación pensado para empezar sin experiencia.</p>
+
+  <div class="stat-row">
+    <div class="stat"><b>1950</b><span>Desde entonces en el mercado</span></div>
+    <div class="stat"><b>60+</b><span>Países con presencia</span></div>
+    <div class="stat"><b>7M+</b><span>Beauty Influencers activas</span></div>
+  </div>
+
+  <div class="checklist">
+    <div class="check">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#d4a017"/><path d="M4.5 8.2L6.8 10.5L11.5 5.5" stroke="#d4a017" stroke-width="1.3"/></svg>
+      <span><b>Bajo costo de inicio.</b> Empezar no exige una gran inversión ni experiencia previa en ventas.</span>
+    </div>
+    <div class="check">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#d4a017"/><path d="M4.5 8.2L6.8 10.5L11.5 5.5" stroke="#d4a017" stroke-width="1.3"/></svg>
+      <span><b>Margen directo en cada venta.</b> Ganancia inmediata por producto vendido, sin esperar ciclos largos.</span>
+    </div>
+    <div class="check">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#d4a017"/><path d="M4.5 8.2L6.8 10.5L11.5 5.5" stroke="#d4a017" stroke-width="1.3"/></svg>
+      <span><b>Varias formas de generar ingresos.</b> Ventas propias, bonos por equipo y bonos de liderazgo a medida que creces.</span>
+    </div>
+    <div class="check">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#d4a017"/><path d="M4.5 8.2L6.8 10.5L11.5 5.5" stroke="#d4a017" stroke-width="1.3"/></svg>
+      <span><b>Comunidad global en crecimiento.</b> Millones de mujeres construyendo lo mismo que tú, en más de 60 países.</span>
+    </div>
+    <div class="check">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#d4a017"/><path d="M4.5 8.2L6.8 10.5L11.5 5.5" stroke="#d4a017" stroke-width="1.3"/></svg>
+      <span><b>Se construye 100% desde tu celular.</b> Redes sociales, contenido y ventas — todo compatible con un trabajo o rutina existente.</span>
+    </div>
+  </div>
+
+  <p class="fine-print">Como todo negocio propio, los resultados dependen del esfuerzo, la constancia y la estrategia de cada persona — no es un ingreso garantizado. Por eso el sistema existe: para que construyas con enfoque, no a ciegas.</p>
+</section>
+
+<div class="divider"></div>
+
+<section class="reveal">
+  <p class="eyebrow">El acompañamiento</p>
+  <h2 style="font-size:clamp(1.7rem,4vw,2.2rem);">No estás sola/o después de empezar</h2>
+  <p style="color:var(--cream-dim); margin-top:1rem;">Cuando ya trabajas conmigo, tienes acceso a una herramienta privada de soporte con inteligencia artificial: describes tu duda o dificultad, y el sistema te prepara un plan de acción detallado — sin tener que esperar a la próxima llamada para avanzar.</p>
+  <div class="ai-visual">
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Escribes</b> tu duda o dificultad en el momento en que surge.</span></div>
+    <div class="ai-step"><span class="ai-dot"></span><span><b>La IA analiza</b> tu caso: causa raíz, plan de acción y estrategia concreta.</span></div>
+    <div class="ai-step"><span class="ai-dot"></span><span><b>Yo recibo</b> el informe y te acompaño con contexto real, no a ciegas.</span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="cta reveal" id="cta">
+  <p class="eyebrow">El siguiente paso</p>
+  <h2>Este puede ser tu momento.</h2>
+  <p>Un cuestionario corto para conocer tu motivación. Después, agendamos una llamada — y llego preparado, con una estrategia pensada para ti.</p>
+  <div class="steps">
+    <div class="step"><span class="step-num">01</span><span class="step-text">Responde unas preguntas rápidas sobre tu momento actual.</span></div>
+    <div class="step"><span class="step-num">02</span><span class="step-text">El sistema identifica cómo puedo ayudarte mejor.</span></div>
+    <div class="step"><span class="step-num">03</span><span class="step-text">Eliges el horario que mejor te funcione para hablar.</span></div>
+  </div>
+  <div class="cta-buttons">
+    <a href="cuestionario.html" class="btn">Empezar el cuestionario</a>
+    <a href="https://calendly.com/rodrigo-rojas-uc/llamada-beauty-influencer-system" target="_blank" class="btn secondary">Ya sé que quiero agendar</a>
+  </div>
+</section>
+
+<footer>Este es tu tiempo. Este es tu sistema.</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15});
+  els.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
