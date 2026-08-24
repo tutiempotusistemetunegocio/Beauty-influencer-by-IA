@@ -31,6 +31,8 @@ exports.handler = async (event) => {
   }
 
   // 1) Generar el informe con Claude
+  const keyCheck = process.env.ANTHROPIC_API_KEY || '';
+  console.log('Diagnóstico clave: longitud =', keyCheck.length, '| empieza con =', keyCheck.slice(0, 12), '| termina con =', JSON.stringify(keyCheck.slice(-3)));
   let informe = 'No se pudo generar el informe automático — revisa el mensaje original abajo.';
   try {
     const https = require('https');
