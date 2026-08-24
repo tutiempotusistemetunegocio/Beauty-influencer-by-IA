@@ -28,7 +28,7 @@ export default async (req) => {
   }
   if (!nombre || !dificultad) {
     return new Response(JSON.stringify({ error: 'Faltan datos' }), { status: 400 });
-  }d
+  }
 
   // 1) Generar el informe con Claude
   let informe = 'No se pudo generar el informe automático — revisa el mensaje original abajo.';
@@ -101,7 +101,7 @@ ${dificultad}`
 
   // 2) Enviarte todo por correo vía Formspree
   try {
-    await fetch(process.env.FORMSPREE_ENDPOINT, {
+    const fsRes = await fetch(process.env.FORMSPREE_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json' },
       body: new URLSearchParams({
@@ -114,7 +114,13 @@ ${dificultad}`
         _subject: `Consulta de equipo: ${nombre}`
       })
     });
+    if (!fsRes.ok) {
+      const fsErrText = await fsRes.text();
+      console.error('Formspree respondió con error:', fsRes.status, fsErrText);
+      return new Response(JSON.stringify({ error: 'No se pudo enviar el informe' }), { status: 500 });
+    }
   } catch (err) {
+    console.error('Fallo al llamar a Formspree:', err.message || err);
     return new Response(JSON.stringify({ error: 'No se pudo enviar el informe' }), { status: 500 });
   }
 
